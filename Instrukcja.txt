@@ -1,0 +1,41 @@
+RSA — instrukcja
+
+1. Rozpakuj ZIP przez „Wyodrębnij wszystkie”.
+2. Otwórz folder RSA_Windows i uruchom rsa.exe (Windows 64-bit).
+3. Wybierz 1, aby szyfrować.
+4. Wybierz 1, aby wpisać zdanie, albo 2, aby podać nazwę pliku.
+   Przy odczycie pliku sam Enter wybiera dane.txt.
+5. Przy pytaniu o plik wynikowy naciśnij Enter — powstanie wynik.txt.
+   Możesz też wpisać własną nazwę.
+
+Aby odzyskać wiadomość:
+1. W menu wybierz 2 (odszyfruj).
+2. Wybierz 2 (plik).
+3. Naciśnij Enter, aby odczytać wynik.txt.
+4. Naciśnij Enter, aby zapisać treść do odszyfrowane.txt.
+5. Otwórz odszyfrowane.txt w Notatniku.
+
+Wynikowe pliki powstają po udanej operacji, obok programu.
+Jeśli plik już istnieje, program zapyta o zgodę na nadpisanie.
+Wybór 0 kończy pracę. Wybór 3 pokazuje klucze.
+
+Jak działają klucze?
+Publiczny (3233, 7) szyfruje, a prywatny (3233, 1783) odszyfrowuje.
+Na przykład A zamienia się w 1317, a 1317 z powrotem w A.
+Program ma tę parę wbudowaną i stosuje ją automatycznie.
+W prawdziwej wymianie odbiorca udostępnia klucz publiczny nadawcy,
+a prywatny zachowuje dla siebie. Tutaj oba są jawne, aby łatwo
+pokazać oba działania na jednym komputerze.
+To szkolna demonstracja z małymi liczbami, nie ochrona poufnych danych.
+
+Błędy
+- Brak pliku: sprawdź nazwę i umieść plik obok rsa.exe.
+- Dane puste lub za duże: maksymalnie 10 000 bajtów wiadomości
+  albo 50 000 bajtów szyfrogramu. Polskie litery zajmują kilka bajtów.
+- Błędny szyfrogram: użyj pliku utworzonego przez ten program.
+  Zawiera on liczby mniejsze od 3233 oddzielone białymi znakami.
+- Zapis niemożliwy: wybierz folder z prawem zapisu.
+- Polskie znaki: zapisz plik tekstowy w UTF-8 i odczytaj w tym kodowaniu.
+- Wpisuj nazwę pliku bez cudzysłowów, np. moja wiadomosc.txt.
+
+Kod źródłowy jest w podfolderze kod.

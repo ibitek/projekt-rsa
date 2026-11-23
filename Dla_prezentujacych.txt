@@ -1,0 +1,329 @@
+RSA — PRZYGOTOWANIE DO PREZENTACJI
+Materiał do nauki i przećwiczenia pokazu
+
+1. CO WŁAŚCIWIE ROBI PROGRAM
+
+Wiadomość jest dla komputera ciągiem bajtów, czyli liczb od 0 do 255.
+Program bierze każdą taką liczbę i wykonuje działanie RSA.
+Wyniki zapisuje jako liczby oddzielone spacjami w wynik.txt.
+Przy odszyfrowaniu wykonuje inne działanie na tych liczbach
+i odzyskuje bajty oryginalnej wiadomości.
+
+Szyfrowanie służy do ukrywania treści. Odszyfrowanie ją przywraca.
+RSA jest asymetryczne, ponieważ używamy dwóch powiązanych kluczy.
+Klucz publiczny służy do szyfrowania, a prywatny do odszyfrowania.
+
+W tej aplikacji oba klucze są stałe i wpisane do kodu.
+Opcja „pokaż klucze” je wyświetla. Program nie generuje nowych kluczy.
+To ważne, żeby podczas prezentacji dokładnie opisać istniejącą wersję.
+
+2. KRÓTKI TEKST NA POCZĄTEK PREZENTACJI
+
+„Przedstawiamy program konsolowy w C++, który szyfruje wiadomości
+metodą RSA. Użytkownik może wpisać zdanie albo odczytać wiadomość
+z pliku. Program zapisuje zaszyfrowany wynik jako ciąg liczb.
+Druga opcja pozwala odzyskać pierwotny tekst.
+
+W RSA stosuje się dwa klucze. Publiczny służy do szyfrowania,
+a prywatny do odszyfrowania. W naszej wersji używamy stałej pary
+niewielkich kluczy, dzięki czemu można łatwo pokazać obliczenia.
+Obsługę programu podzieliliśmy na funkcje odpowiedzialne za menu,
+odczyt danych, algorytm i zapis plików.”
+
+Ten fragment można powiedzieć własnymi słowami. Najpierw warto
+samodzielnie przejść pokaz opisany poniżej.
+
+3. POKAZ NA ŻYWO — OKOŁO 3–5 MINUT
+
+Przed lekcją
+Rozpakuj folder. Sprawdź, czy rsa.exe i dane.txt są obok siebie.
+Otwórz dane.txt w Notatniku i przygotuj krótką wiadomość, np.
+„Spotkanie po lekcjach o 15.”. Zapisz plik w UTF-8.
+Przećwicz cały pokaz na szkolnym komputerze, jeśli masz możliwość.
+
+Etap A — szyfrowanie jednego znaku
+Uruchom rsa.exe.
+Wpisz 1 i Enter — szyfrowanie.
+Wpisz 1 i Enter — klawiatura.
+Wpisz wielką literę A i Enter.
+Naciśnij Enter — domyślne wynik.txt.
+Jeżeli plik już istnieje, wpisz 1, aby potwierdzić nadpisanie.
+Otwórz wynik.txt w Notatniku. Powinna być w nim liczba 1317.
+
+Powiedz
+„Program zamienił wartość bajtu litery A, czyli 65, na blok 1317.
+Za chwilę wykonamy operację odwrotną drugim kluczem.”
+
+Etap B — odszyfrowanie
+Wróć do konsoli. Wpisz 2 i Enter — odszyfrowanie.
+Wpisz 2 i Enter — wejście z pliku.
+Enter zatwierdza wynik.txt.
+Kolejny Enter zatwierdza odszyfrowane.txt.
+Jeżeli pojawi się pytanie o nadpisanie, potwierdź świadomie.
+Otwórz odszyfrowane.txt. Powinna być litera A.
+
+Etap C — obsługa pełnego pliku
+W menu wybierz kolejno 1, 2, Enter, Enter.
+To szyfruje dane.txt do wynik.txt.
+Potwierdź nadpisanie, jeśli program o nie zapyta.
+Pokaż ciąg liczb. Następnie wybierz 2, 2, Enter, Enter.
+Pokaż odzyskany tekst i porównaj go z dane.txt.
+Możesz też podać własną nazwę wyniku, np. pokaz.txt.
+
+Etap D — jeden błąd użytkownika
+Wybierz szyfrowanie z pliku i podaj brak.txt.
+Pokaż komunikat o błędzie i powrót do menu.
+Na koniec opcja 3 wyświetla oba klucze, a 0 kończy program.
+
+Nie wpisuj całej sekwencji na ślepo. Pytanie o nadpisanie pojawia się
+tylko wtedy, gdy plik docelowy już istnieje.
+
+4. KLUCZE NA PROSTYM PRZYKŁADZIE
+
+Wyobraź sobie, że ktoś chce wysłać ci wiadomość.
+Udostępniasz mu swój klucz publiczny. Ta osoba szyfruje nim tekst.
+Ty używasz pasującego klucza prywatnego, żeby tekst odczytać.
+
+W naszej demonstracji program zawiera oba klucze, więc ta sama
+aplikacja pokazuje obie role. To upraszcza obsługę na lekcji.
+W prawdziwym zastosowaniu odbiorca chroni klucz prywatny.
+
+Klucz jest parą liczb.
+Publiczny to (3233, 7).
+Prywatny to (3233, 1783).
+Wspólna liczba 3233 jest modułem, czyli dzielnikiem przy braniu reszty.
+Liczby 7 i 1783 są wykładnikami potęg.
+
+5. SKĄD WZIĘŁY SIĘ TE LICZBY
+
+Zaczynamy od dwóch różnych liczb pierwszych.
+p = 61, q = 53.
+
+Ich iloczyn to n.
+n = 61 * 53 = 3233.
+
+Następnie obliczamy phi.
+phi = (61 - 1) * (53 - 1) = 60 * 52 = 3120.
+
+Wybieramy publiczne e = 7.
+Warunek jest taki, żeby e i phi nie miały wspólnego dzielnika
+większego niż 1. Mówimy, że są względnie pierwsze.
+
+Prywatne d dobieramy tak, aby e*d przy dzieleniu przez phi dawało
+resztę 1. Dla d = 1783 mamy
+7 * 1783 = 12481 = 4 * 3120 + 1.
+
+Stąd klucze publiczny (n,e) i prywatny (n,d).
+Liczby p, q i phi służą do wyjaśnienia ich doboru.
+Program przy każdej operacji używa już gotowych n, e i d.
+
+6. CO OZNACZA MODULO
+
+Modulo to reszta z dzielenia.
+17 mod 5 = 2, ponieważ 17 = 3*5 + 2.
+W C++ operator reszty zapisujemy jako %.
+Zatem 17 % 5 daje 2.
+
+Szyfrowanie bajtu
+c = m^e mod n
+
+Odszyfrowanie bloku
+m = c^d mod n
+
+Litera A daje m=65.
+65^7 mod 3233 = 1317.
+1317^1783 mod 3233 = 65.
+
+W kodzie C++ znak ^ oznacza XOR, a nie potęgowanie.
+Potęgę oblicza nasza funkcja potegaModulo.
+
+Dlaczego to odzyskuje bajt?
+Wykładniki dobrano tak, że e*d = 1 + k*phi. Twierdzenia o resztach
+z potęgowania zapewniają dla dwóch różnych liczb pierwszych powrót
+do m po obu operacjach, jeśli 0 <= m < n.
+Dla m względnie pierwszego z n wynika to z twierdzenia Eulera.
+Dla bajtów podzielnych przez p lub q można rozpatrzyć wynik osobno
+modulo p i modulo q, a następnie połączyć te warunki.
+Na prezentacji wystarczy wyjaśnić związek wykładników i pokazać przykład.
+
+7. POTĘGOWANIE — NAJWAŻNIEJSZA FUNKCJA
+
+Nie obliczamy najpierw całej ogromnej liczby 1317^1783.
+Po każdym mnożeniu bierzemy resztę modulo n.
+Dodatkowo korzystamy z tego, że potęgę można złożyć z kolejnych
+kwadratów, np. 7 = 1 + 2 + 4.
+
+Funkcja zaczyna od wartosc = 1.
+Dopóki wykladnik jest większy od 0:
+- Jeśli wykładnik jest nieparzysty, mnoży wynik przez podstawę.
+- Podnosi podstawę do kwadratu.
+- Dzieli wykładnik całkowicie przez 2.
+Po mnożeniach bierze resztę modulo n.
+
+Dla 65^7 mod 3233 kolejne stany wyglądają tak.
+Start — wynik 1, podstawa 65, wykładnik 7.
+Krok 1 — wynik 65, podstawa 992, wykładnik 3.
+Krok 2 — wynik 3053, podstawa 1232, wykładnik 1.
+Krok 3 — wynik 1317, podstawa 1547, wykładnik 0.
+Zwracamy 1317.
+
+Wykładnik maleje dwa razy w każdej iteracji. Dla 1783 wystarczy
+11 iteracji. Zwykłe mnożenie po jednym czynniku wymagałoby znacznie
+więcej kroków. Reszty są mniejsze od 3233, więc największy możliwy
+iloczyn dwóch reszt to 3232*3232 = 10 445 824 i mieści się w int.
+
+8. JAK PRZEJŚĆ PRZEZ KOD PODCZAS ODPOWIEDZI
+
+main
+To punkt startowy. Ustawia UTF-8 i folder plików obok EXE.
+W pętli pobiera opcję. Dla 0 kończy, dla 3 pokazuje klucze.
+Dla 1 lub 2 pobiera dane, przetwarza je i zapisuje wynik.
+Przy błędzie wraca do menu.
+
+wypisz
+Wyświetla napis znak po znaku. fflush sprawia, że pytanie będzie
+widoczne przed oczekiwaniem na odpowiedź.
+
+wiersz
+getchar pobiera po jednym znaku, aż do Entera lub końca wejścia.
+Sprawdza limit, dopisuje znak kończący napis i oddaje długość.
+Przy zbyt długim wierszu zużywa resztę wejścia i zwraca -1.
+
+liczba
+Wczytuje krótki wiersz i używa strtol.
+Wskaźnik koniec pokazuje, gdzie skończyło się odczytywanie liczby.
+Dzięki temu „2abc” zostanie odrzucone. Sprawdzany jest też zakres.
+
+pobierzDane
+Pyta o klawiaturę albo plik. Przy klawiaturze wywołuje wiersz.
+Przy pliku pyta o nazwę, otwiera go przez fopen i pobiera bajty fgetc.
+Tryb rb oznacza odczyt binarny. Daje kontrolę nad dokładnymi bajtami.
+Po odczycie sprawdza błąd i zamyka plik przez fclose.
+
+szyfruj
+Pętla przechodzi przez każdy bajt danych.
+unsigned char zapewnia wartość 0–255.
+potegaModulo wyznacza blok, a sprintf zapisuje jego cyfry i spację.
+Funkcja zwraca długość utworzonego szyfrogramu.
+
+odstep
+Rozpoznaje spacje, tabulatory i końce wierszy. Dzięki temu liczby
+szyfrogramu mogą znajdować się w kilku wierszach.
+
+odszyfruj
+Pomija odstępy. Składa cyfry w liczbę przez blok = blok*10 + cyfra.
+Na przykład cyfry 1, 3, 1, 7 dają kolejno 1, 13, 131, 1317.
+Odrzuca litery oraz bloki większe lub równe n.
+Potęguje blok wykładnikiem prywatnym, sprawdza zakres 0–255
+i dopisuje odzyskany bajt do wyniku.
+
+zapisz
+Pyta o nazwę wyniku. Jeśli plik już istnieje, wymaga potwierdzenia.
+Otwiera plik w trybie wb i zapisuje dokładną liczbę bajtów przez fwrite.
+Kontroluje także wynik zamknięcia, bo błąd zapisu może wystąpić wtedy.
+Anulowanie nadpisania pozostawia istniejący plik.
+
+9. ZAPISY C++, KTÓRE WARTO ZNAĆ
+
+int — liczba całkowita.
+char — pojedynczy bajt wykorzystywany m.in. do przechowywania tekstu.
+bool — true lub false.
+void — funkcja nie zwraca wartości.
+constexpr — stała wyznaczona podczas kompilacji.
+const char* — wskaźnik na znaki odczytywanego napisu.
+FILE* — wskaźnik używany do obsługi otwartego pliku.
+nullptr — pusty wskaźnik.
+EOF — specjalna wartość sygnalizująca koniec odczytu.
+return — zakończenie funkcji i ewentualne zwrócenie wyniku.
+continue — przejście do kolejnej iteracji pętli.
+break — wyjście z pętli.
+++i oraz i++ — zwiększenie i o 1; przy i++ wyrażenie używa starej wartości.
+warunek ? a : b — wybierz a, gdy warunek jest prawdziwy, inaczej b.
+static_cast — jawna konwersja typu.
+#ifdef _WIN32 — dany fragment jest kompilowany dla Windows.
+% — reszta z dzielenia.
+/= 2 — dzielenie i przypisanie; dla liczb całkowitych odrzuca ułamek.
+
+Tablice dane i wynik mają 50 001 miejsc. Dodatkowe miejsce jest
+przeznaczone na znak kończący napis lub wykrycie przekroczenia limitu.
+Bajt szyfrowany daje maksymalnie cztery cyfry i spację, dlatego
+limit szyfrogramu wynosi pięć razy więcej niż limit wiadomości.
+
+10. PYTANIA NAUCZYCIELA I KRÓTKIE ODPOWIEDZI
+
+Dlaczego RSA jest asymetryczne?
+Bo używamy dwóch powiązanych kluczy, publicznego i prywatnego.
+
+Co jest kluczem w waszym programie?
+Publiczny to (3233,7), a prywatny (3233,1783).
+
+Czy program generuje klucze?
+Nie. Używa stałej pary demonstracyjnej zapisanej w kodzie.
+
+Czy w wynik.txt jest klucz?
+Nie. Są tam kolejne bloki zaszyfrowanej wiadomości.
+
+Czy można odszyfrować wynik po ponownym otwarciu programu?
+Tak, ponieważ aplikacja ma tę samą parę kluczy po każdym uruchomieniu.
+
+Czy można podać własny plik?
+Tak. Nazwy wejściowe i wyjściowe można wpisać samodzielnie.
+
+Dlaczego dwa pliki wynikowe?
+wynik.txt przechowuje szyfrogram, a odszyfrowane.txt odzyskany tekst.
+Dzięki temu łatwo je porównać. Nazwy można zmienić.
+
+Czy program szyfruje spacje i nowe wiersze?
+Tak, każdy bajt wejścia. Wpisanie z klawiatury obejmuje jeden wiersz.
+Plik pozwala zachować wiele wierszy.
+
+Dlaczego polska litera może dać kilka liczb?
+Ponieważ UTF-8 zapisuje ją w kilku bajtach, a szyfrujemy bajty osobno.
+
+Dlaczego wynik jest większy od tekstu?
+Jeden bajt zapisujemy jako kilka cyfr i separator.
+
+Czy jedna litera zawsze da tę samą liczbę?
+W naszej wersji tak. Nie stosujemy losowego uzupełnienia.
+
+Czy można tym chronić hasła albo prywatne wiadomości?
+Ta wersja służy do nauki. Ma małe klucze, pokazuje klucz prywatny
+i przetwarza bajty osobno. Profesjonalne wdrożenie wymaga innych
+rozmiarów kluczy oraz odpowiednich mechanizmów kryptograficznych.
+
+Dlaczego n jest większe od 255?
+Każdy szyfrowany bajt musi być mniejszy od modułu n.
+
+Co się stanie po zmianie jednej liczby szyfrogramu?
+Może pojawić się błąd lub inny bajt. Program nie ma mechanizmu
+potwierdzania, że wiadomość nie została zmieniona.
+
+Jak kontrolujecie błędy?
+Sprawdzamy opcje, długości, otwarcie plików, składnię i zakres
+szyfrogramu oraz powodzenie zapisu. Funkcje często zwracają -1.
+
+Dlaczego nie użyliście biblioteki kryptograficznej?
+Celem jest samodzielne pokazanie działań matematycznych RSA.
+Kod obliczeń jest krótki i można go omówić.
+
+Czy UTF-8 ma związek z szyfrowaniem?
+To sposób zapisu znaków w bajtach. RSA przetwarza te bajty,
+a edytor interpretuje odzyskane dane zgodnie z kodowaniem.
+
+11. PODZIAŁ PREZENTACJI NA TRZY OSOBY
+
+Osoba 1 — cel, menu, szyfrowanie zdania i zapis wyniku.
+Osoba 2 — klucz publiczny i prywatny, wyprowadzenie liczb, przykład A.
+Osoba 3 — funkcje kodu, obsługa plików, błędy i ograniczenia.
+
+Każdy powinien umieć samodzielnie przeprowadzić szyfrowanie
+i odszyfrowanie oraz wyjaśnić różnicę między kluczami.
+Podział prezentacji można dopasować do rzeczywistej liczby osób.
+
+12. PIĘĆ RZECZY DO ZAPAMIĘTANIA
+
+1. Publiczny szyfruje, prywatny odszyfrowuje.
+2. Program działa na bajtach wiadomości.
+3. Modulo oznacza resztę z dzielenia.
+4. Potęgowanie przez kwadraty ogranicza liczbę obliczeń.
+5. Klucze są stałe, małe i przeznaczone do demonstracji.

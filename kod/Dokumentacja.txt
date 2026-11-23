@@ -1,0 +1,73 @@
+PROJEKT ZESPOŁOWY — RSA
+Program konsolowy C++17 dla Windows x86-64.
+
+ZAŁOŻENIA
+Wejście wybierane przez użytkownika: zdanie z klawiatury lub plik,
+domyślnie dane.txt. Nazwę wejścia można zmienić.
+Wynik jest zapisywany do pliku, którego nazwę użytkownik podaje
+lub zatwierdza Enterem. Domyślne nazwy: wynik.txt dla szyfrowania,
+odszyfrowane.txt dla odszyfrowania. Menu umożliwia wielokrotne operacje.
+
+ALGORYTM
+Przyjęto demonstracyjne p=61, q=53, n=p*q=3233.
+Phi=(p-1)*(q-1)=3120. Wykładnik publiczny e=7 jest względnie pierwszy
+z phi. Prywatny d=1783 spełnia e*d mod phi = 1.
+Te trzy stałe są wpisane w kod. Program nie generuje nowych kluczy.
+Bajt m (0–255) jest szyfrowany c=m^e mod n.
+Odzyskanie bajtu następuje przez m=c^d mod n.
+Każdy bajt daje jedną liczbę. Polskie znaki UTF-8 mogą dawać kilka liczb.
+Potęgowanie przez kolejne kwadraty działa w O(log wykładnika).
+Mnożenia reszt przy n=3233 mieszczą się w 32-bitowym int.
+Łączna praca jest proporcjonalna do liczby bajtów i kosztu potęgowania.
+
+PODZIAŁ NA FUNKCJE
+main — ustawia konsolę UTF-8 i folder roboczy obok EXE, obsługuje menu,
+       łączy odczyt, wybraną operację i zapis.
+wypisz — wyświetla komunikat i opróżnia bufor wyjścia.
+wiersz — pobiera wiersz, sprawdza limit, wykrywa koniec wejścia.
+liczba — przekształca wiersz na liczbę i sprawdza zakres.
+potegaModulo — oblicza potęgę modulo przez kolejne kwadraty.
+pobierzDane — wybiera klawiaturę lub plik i wczytuje dane do tablicy.
+szyfruj — szyfruje każdy bajt, tworzy tekst z liczbami.
+odstep — rozpoznaje białe znaki pomiędzy liczbami.
+odszyfruj — sprawdza format i zakres bloków, odzyskuje bajty.
+zapisz — wybiera nazwę, pyta przed nadpisaniem i kontroluje zapis.
+
+STAŁE I ZMIENNE
+LIMIT_TEKSTU=10000, LIMIT_SZYFRU=50000 — limity danych w bajtach.
+MODUL=3233, PUBLICZNY=7, PRYWATNY=1783 — składowe pary RSA.
+dane, wynik — globalne tablice wejścia i wyjścia.
+koniecWejscia — informacja o zakończeniu wejścia.
+tekst, pytanie — napisy komunikatów i bufor wczytywanego wiersza.
+ile, limit, znak — długość danych, limit oraz bieżący znak.
+minimum, maksimum, wartosc, koniec — granice liczby, odczytana wartość
+i wskaźnik końca konwersji. W potęgowaniu wartosc to bieżący wynik.
+podstawa, wykladnik, n — argumenty potęgowania modularnego.
+e, d — wykładniki przekazywane do szyfrowania i odszyfrowania.
+zrodlo, opcja, szyfrowanie — wybór wejścia, menu i kierunku działania.
+nazwa, rozmiar, wejscie, wyjscie — bufor nazwy, jej długość i nazwy plików.
+plik, blad, zapisano — uchwyt pliku i kontrola poprawności operacji.
+dlugosc, i, bajt, blok — długość wyniku, indeks, bajt i blok szyfrogramu.
+sciezka, dlugoscSciezki — ścieżka do EXE i jej długość w znakach UTF-16.
+
+BIBLIOTEKI I BUDOWANIE
+cstdio i cstdlib należą do standardowej biblioteki C++.
+windows.h udostępnia funkcje systemowe Windows do kodowania konsoli
+i ustalenia folderu roboczego. Biblioteki systemowe msvcrt.dll i
+KERNEL32.dll należą do środowiska Windows i podlegają warunkom Microsoft.
+Nie są dołączane do paczki. Brak zewnętrznych bibliotek kryptograficznych.
+Kompilacja w MinGW-w64, wykonana z folderu RSA_Windows:
+g++ -std=c++17 -O2 -static kod/rsa.cpp -o rsa.exe
+
+SPRAWDZENIE
+Test wykonawczy pliku PE z zastępczymi funkcjami systemowymi na Linux:
+wpisane A daje 1317, a odczyt 1317 daje A. Odczyt dane.txt,
+zapis wynik.txt i odszyfrowanie do odszyfrowane.txt odzyskują
+identyczne bajty, także dla polskich znaków i wielu wierszy.
+Nie wykonano testu na rzeczywistym systemie Windows.
+
+PROPONOWANY PODZIAŁ PRACY
+Uzupełnić zgodnie z rzeczywistym wkładem.
+Osoba 1 __________ — algorytm RSA i opis matematyki.
+Osoba 2 __________ — menu, odczyt i zapis plików.
+Osoba 3 __________ — testy, instrukcja i dokumentacja.
