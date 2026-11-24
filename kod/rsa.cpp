@@ -1,4 +1,11 @@
-// Edukacyjny RSA. Standardowe naglowki C++ oraz systemowa obsluga konsoli Windows.
+// Szkolny projekt RSA — program konsolowy w C++
+//
+// Jak czytać program: zaczynamy w main() w sekcji 7. Program wyświetla menu,
+// wczytuje dane, szyfruje je lub odszyfrowuje i zapisuje wynik do pliku.
+
+// 1. Biblioteki, limity danych i klucze =================================
+// Gotowa para kluczy pozwala prześledzić te same obliczenia na lekcji.
+// Oba klucze używają liczby 3233. Wykładnik 7 szyfruje, a 1783 odszyfrowuje.
 #include <cstdio>
 #include <cstdlib>
 #ifdef _WIN32
@@ -15,6 +22,10 @@ char dane[LIMIT_SZYFRU + 1], wynik[LIMIT_SZYFRU + 1];
 
 bool koniecWejscia = false;
 
+// 2. Obsługa konsoli ==================================================
+// Wczytujemy cały wiersz. Przy pytaniu z menu zamieniamy go na liczbę
+// i sprawdzamy zakres, np. od 0 do 3. Wartość -1 oznacza błąd odczytu
+// lub niepoprawny wybór.
 void wypisz(const char* tekst) {
     while (*tekst) putchar(*tekst++);
     fflush(nullptr);
@@ -42,6 +53,10 @@ int liczba(const char* pytanie, int minimum, int maksimum) {
     return static_cast<int>(wartosc);
 }
 
+// 3. Obliczenia RSA ===================================================
+// Obie operacje liczą resztę z dzielenia potęgi przez n. Po każdym
+// mnożeniu od razu bierzemy resztę, dzięki czemu liczby pozostają małe.
+// Np. 65 do potęgi 7 liczymy z potęg 4, 2 i 1, bo 7 = 4 + 2 + 1.
 int potegaModulo(int podstawa, int wykladnik, int n) {
     int wartosc = 1;
     while (wykladnik > 0) {
@@ -52,6 +67,10 @@ int potegaModulo(int podstawa, int wykladnik, int n) {
     return wartosc;
 }
 
+// 4. Wczytywanie wiadomości lub szyfrogramu ===========================
+// Dane można wpisać ręcznie albo odczytać z pliku. Sam Enter wybiera
+// dane.txt do szyfrowania lub wynik.txt do odszyfrowania.
+// Plik czytamy bajt po bajcie, żeby zachować też spacje i końce linii.
 int pobierzDane(int limit, bool szyfrowanie) {
     int zrodlo = liczba("Dane: 1 - klawiatura, 2 - plik: ", 1, 2);
     if (zrodlo == 1) {
@@ -77,6 +96,10 @@ int pobierzDane(int limit, bool szyfrowanie) {
     return blad ? -1 : ile;
 }
 
+// 5. Szyfrowanie i odszyfrowanie ======================================
+// Szyfrujemy każdy bajt osobno. Dla litery A kod bajtu to 65.
+// Z kluczem publicznym otrzymujemy 65 do potęgi 7 modulo 3233, czyli 1317.
+// Zapisujemy kolejne wyniki jako liczby rozdzielone spacjami.
 int szyfruj(int ile, int e, int n) {
     int dlugosc = 0;
     for (int i = 0; i < ile; ++i) {
@@ -91,6 +114,8 @@ bool odstep(char znak) {
     return znak == ' ' || (znak >= '\t' && znak <= '\r');
 }
 
+// Odszyfrowanie czyta liczby oddzielone odstępami i używa klucza prywatnego.
+// 1317 do potęgi 1783 modulo 3233 daje 65, czyli znowu literę A.
 int odszyfruj(int ile, int d, int n) {
     int i = 0, dlugosc = 0;
     while (i < ile) {
@@ -111,6 +136,9 @@ int odszyfruj(int ile, int d, int n) {
     return dlugosc;
 }
 
+// 6. Zapis wyniku ====================================================
+// Można wpisać własną nazwę pliku albo zatwierdzić domyślną Enterem.
+// Jeśli plik już istnieje, program pyta, czy można go nadpisać.
 void zapisz(int dlugosc, bool szyfrowanie) {
     char nazwa[256];
     wypisz(szyfrowanie ? "Plik wynikowy [Enter = wynik.txt]: " : "Plik wynikowy [Enter = odszyfrowane.txt]: ");
@@ -132,6 +160,11 @@ void zapisz(int dlugosc, bool szyfrowanie) {
     else { wypisz("Zapisano: "); puts(wyjscie); }
 }
 
+// 7. Start programu i menu ===========================================
+// Na Windowsie ustawiamy UTF-8 i szukamy plików obok programu.
+// Menu powtarza się, dopóki użytkownik nie wybierze 0.
+// Opcje 1 i 2 wczytują dane, przetwarzają je i zapisują wynik.
+// Opcja 3 pokazuje gotowe klucze używane w obliczeniach.
 int main() {
 #ifdef _WIN32
     SetConsoleCP(65001);
