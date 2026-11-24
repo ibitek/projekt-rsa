@@ -137,7 +137,11 @@ a{color:var(--green);text-underline-offset:3px}
       <div><span class="label" id="plain-label">odszyfrowane.txt</span><output id="plain" aria-labelledby="plain-label" aria-live="polite">—</output></div>
     </div>
     <p class="note">W pokazie każdy bajt jest liczony tak samo jak w C++. W słowie <strong>ALA</strong> obie litery <strong>A</strong> dają <strong>1317</strong>.</p>
-    <div class="callout">W projekcie klucze są małe i oba są jawne. To wersja do nauki. Do ochrony prawdziwych danych używa się dużych kluczy i dodatkowych zabezpieczeń.</div>
+    <div class="callout">
+      <h3>Gdzie spotykamy RSA i AES na co dzień?</h3>
+      <p>Gdy otwieramy stronę przez <strong>HTTPS</strong>, RSA może służyć do potwierdzenia tożsamości serwera. Dane może szyfrować <strong>AES-256</strong>, który ma <strong>2<sup>256</sup> możliwych kluczy</strong>. Jeden klucz można zapisać w 64 cyfrach szesnastkowych.</p>
+      <p class="note">Nasz przykład łatwo rozłożyć na czynniki (<strong>3233 = 61 × 53</strong>), dlatego nadaje się do nauki. Praktyczny atak na RSA-2048 wymagałby znacznie potężniejszego sprzętu, np. odpowiednio dużego komputera kwantowego.</p>
+    </div>
     <p class="note"><a href="https://github.com/ibitek/projekt-rsa">Repozytorium projektu</a></p>
   </section>
 </main>
