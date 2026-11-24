@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RSA — szkolny projekt w C++</title>
+<style>
+:root{color-scheme:light;--bg:#f7f3ea;--paper:#fffdf8;--ink:#182820;--muted:#4d5d54;--green:#194936;--tint:#e4eee4;--line:#c9d3c8;--accent:#f5cf75;--mono:Consolas,"Courier New",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:clamp(17px,2.25vw,27px)/1.35 system-ui,sans-serif}
+.deck{min-height:100vh;min-height:100dvh;display:grid;grid-template-rows:1fr auto}
+main{align-self:center;width:min(100%,1360px);margin:auto;padding:clamp(20px,4vw,56px)}
+.slide{max-width:1170px;margin:auto}
+[hidden]{display:none!important}
+.eyebrow{color:var(--green);font-weight:750;font-size:.64em;letter-spacing:.15em;text-transform:uppercase;margin:0 0 12px}
+h1,h2,h3,p{margin:0}
+h1,h2{font-weight:780;letter-spacing:-.045em;line-height:1.03;text-wrap:balance}
+h1{font-size:clamp(50px,7.6vw,108px)}
+h2{font-size:clamp(34px,5.4vw,76px);margin-bottom:clamp(14px,2.6vw,32px)}
+h3{font-size:1em;margin-bottom:.34em}
+.lead{max-width:32em;margin-top:.7em;color:var(--muted);font-size:1.08em}
+.grid,.keys,.flow,.demo{display:grid;gap:clamp(10px,1.55vw,22px)}
+.keys{grid-template-columns:repeat(2,minmax(0,1fr));margin-top:clamp(17px,3vw,38px)}
+.grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.flow,.demo{grid-template-columns:repeat(3,minmax(0,1fr))}
+.card,.formula,.callout,.demo>div{border:1px solid var(--line);border-radius:16px;padding:clamp(12px,1.75vw,25px);background:var(--paper)}
+.public{background:var(--tint)}
+.private{background:var(--green);color:white;border-color:var(--green)}
+.card p,.demo p{font-size:.82em}
+.math,code,input{font-family:var(--mono)}
+.math{display:block;font-size:1.1em;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.45}
+.math sup{font-size:.65em}
+.small{font-size:.76em;color:var(--muted)}
+.note{margin-top:clamp(12px,1.7vw,24px);font-size:.79em;color:var(--muted)}
+.formula{background:var(--green);color:white;margin:0 0 clamp(12px,1.7vw,24px)}
+.formula .math{font-size:clamp(23px,4.4vw,58px)}
+.formula p{font-size:.82em;margin-top:.25em}
+.callout{background:var(--tint);margin-top:clamp(12px,1.7vw,24px);font-size:.87em}
+.example{background:var(--accent);border-color:#e1b857}
+.blocks{display:grid;gap:.3em;margin-top:.35em}
+.demo label,.demo .label{font-size:.78em;font-weight:750;display:block;margin-bottom:.55em}
+.demo output,.demo input{display:block;width:100%;min-height:2.35em;padding:.48em .55em;border-radius:8px;border:1px solid var(--line);font-size:.98em;background:#fff;color:var(--ink)}
+.demo output{font-family:var(--mono);overflow-wrap:anywhere;max-height:5em;overflow:auto}
+.demo button{margin-top:.6em;width:100%}
+button{border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:8px;padding:.56em .95em;font:650 15px system-ui,sans-serif;cursor:pointer}
+button:hover:enabled{background:var(--tint)}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid #a16a12;outline-offset:3px}
+button:disabled{opacity:.45;cursor:default}
+button.primary{color:white;background:var(--green);border-color:var(--green)}
+button.primary:hover:enabled{background:#246144}
+nav{border-top:1px solid var(--line);width:100%;display:flex;align-items:center;gap:10px;padding:10px clamp(12px,4vw,56px);font-size:15px;background:var(--paper)}
+nav progress{height:6px;min-width:18px;flex:1;accent-color:var(--green);margin:0 4px}
+nav span{min-width:3em;text-align:center;font-variant-numeric:tabular-nums}
+#full{margin-right:auto}
+a{color:var(--green);text-underline-offset:3px}
+@media(max-width:700px){.flow,.demo{grid-template-columns:1fr}.grid{gap:9px}.card,.formula,.callout,.demo>div{border-radius:12px}.eyebrow{margin-bottom:8px}nav{gap:6px}nav button{font-size:13px;padding:.55em .65em}#full{display:none}}
+@media(max-width:360px){.grid,.keys{grid-template-columns:1fr}}
+@media(max-height:560px) and (min-width:701px){main{padding:18px 32px}body{font-size:19px}h2{font-size:46px;margin-bottom:15px}.card,.formula,.callout,.demo>div{padding:12px}.note{margin-top:10px}}
+@media print{body{font-size:17px;background:white}main{padding:0}.deck{display:block}.slide,.slide[hidden]{display:block!important;break-after:page;padding:20mm 12mm}.slide:last-child{break-after:auto}nav,button{display:none!important}}
+</style>
+</head>
+<body>
+<div class="deck">
+<main>
+  <section class="slide" aria-labelledby="s1">
+    <p class="eyebrow">Projekt informatyczny · C++</p>
+    <h1 id="s1" tabindex="-1">Jak działa RSA?</h1>
+    <p class="lead">Nasz program zamienia tekst na liczby i potrafi z tych liczb odzyskać tekst. RSA używa do tego dwóch kluczy.</p>
+    <div class="keys">
+      <div class="card public"><h3>Klucz publiczny szyfruje</h3><p>Każdy może go dostać i zaszyfrować wiadomość dla odbiorcy.</p></div>
+      <div class="card private"><h3>Klucz prywatny odszyfrowuje</h3><p>Odbiorca zachowuje go dla siebie i używa do odczytania wiadomości.</p></div>
+    </div>
+  </section>
+
+  <section class="slide" aria-labelledby="s2" hidden>
+    <p class="eyebrow">Klucze</p>
+    <h2 id="s2" tabindex="-1">Skąd się biorą liczby?</h2>
+    <div class="grid">
+      <div class="card"><h3>1. Bierzemy dwie liczby pierwsze</h3><span class="math">p = 61, q = 53<br>n = 61 × 53 = 3233</span><p><strong>n</strong> pojawia się w obu kluczach.</p></div>
+      <div class="card"><h3>2. Liczymy pomocniczą wartość φ</h3><span class="math">φ = (61 − 1)(53 − 1)<br>φ = 60 × 52 = 3120</span><p>Użyjemy jej do dobrania wykładników.</p></div>
+      <div class="card public"><h3>3. Wybieramy wykładnik <em>e</em></h3><span class="math">e = 7</span><p>7 i 3120 nie mają wspólnego dzielnika poza 1.</p></div>
+      <div class="card private"><h3>4. Dobieramy wykładnik <em>d</em></h3><span class="math">7 × 1783 = 4 × 3120 + 1</span><p>Mnożymy <em>e</em> przez <em>d</em> i po podzieleniu przez 3120 ma zostać reszta 1. Dlatego <strong>d = 1783</strong>.</p></div>
+    </div>
+    <p class="note">W kodzie zapisaliśmy gotowe klucze. <strong>Publiczny (3233, 7)</strong> i <strong>prywatny (3233, 1783)</strong>.</p>
+  </section>
+
+  <section class="slide" aria-labelledby="s3" hidden>
+    <p class="eyebrow">Szyfrowanie · klucz publiczny</p>
+    <h2 id="s3" tabindex="-1">Jak litera A zmienia się w 1317?</h2>
+    <div class="formula">
+      <span class="math">65<sup>7</sup> mod 3233 = 1317</span>
+      <p>Litera <strong>A</strong> ma kod <strong>65</strong>. Podnosimy 65 do potęgi 7 i bierzemy <strong>resztę z dzielenia przez 3233</strong>. To właśnie oznacza <em>mod</em>.</p>
+    </div>
+    <div class="card example">
+      <h3>Rachunek w trzech krokach</h3>
+      <div class="blocks math">
+        <span>65<sup>2</sup> = 4225 = 3233 + <strong>992</strong></span>
+        <span>65<sup>4</sup> mod 3233 = 992<sup>2</sup> mod 3233 = <strong>1232</strong></span>
+        <span>65<sup>7</sup> mod 3233 = (1232 × 992 × 65) mod 3233 = <strong>1317</strong></span>
+      </div>
+    </div>
+    <p class="note">Ponieważ 7 = 4 + 2 + 1, wystarczą reszty dla tych trzech potęg.</p>
+  </section>
+
+  <section class="slide" aria-labelledby="s4" hidden>
+    <p class="eyebrow">Odszyfrowanie · klucz prywatny</p>
+    <h2 id="s4" tabindex="-1">Jak z 1317 odzyskać A?</h2>
+    <div class="formula">
+      <span class="math">1317<sup>1783</sup> mod 3233 = 65</span>
+      <p>Teraz zaczynamy od liczby z szyfrogramu. Zmieniamy wykładnik na <strong>1783</strong> i dalej dzielimy przez <strong>3233</strong>. Kod <strong>65</strong> znowu oznacza literę <strong>A</strong>.</p>
+    </div>
+    <div class="callout">
+      <h3>Dlaczego wraca ta sama litera?</h3>
+      <p>Po obu operacjach wykładniki się mnożą. Dobieramy je tak, żeby <strong>7 × 1783 = 1 + 4 × 3120</strong>. Dzięki własności liczb pierwszych ta dodatkowa wielokrotność 3120 nie zmienia wyniku modulo 3233.</p>
+    </div>
+    <p class="note">Program od razu liczy reszty po kolejnych mnożeniach, więc nie musi zapisywać ogromnej liczby 1317<sup>1783</sup>.</p>
+  </section>
+
+  <section class="slide" aria-labelledby="s5" hidden>
+    <p class="eyebrow">Nasz program</p>
+    <h2 id="s5" tabindex="-1">Od wiadomości do pliku</h2>
+    <div class="flow">
+      <div class="card"><h3>Wejście</h3><p>Wpisujemy wiadomość w konsoli albo wczytujemy ją z <code>dane.txt</code>.</p></div>
+      <div class="card public"><h3>Szyfrowanie</h3><p>Program szyfruje każdy bajt tekstu osobno i zapisuje liczby w <code>wynik.txt</code>.</p></div>
+      <div class="card"><h3>Odszyfrowanie</h3><p>Program odczytuje liczby z <code>wynik.txt</code> i zapisuje tekst w <code>odszyfrowane.txt</code>.</p></div>
+    </div>
+    <div class="callout"><strong>W konsoli:</strong> 1 szyfruje, 2 odszyfrowuje, 3 pokazuje klucze. Enter wybiera domyślną nazwę pliku. Można też podać własną.</div>
+    <p class="note">W kodzie <code>szyfruj()</code> i <code>odszyfruj()</code> korzystają z tej samej funkcji <code>potegaModulo()</code>. Zmienia się klucz.</p>
+  </section>
+
+  <section class="slide" aria-labelledby="s6" hidden>
+    <p class="eyebrow">Pokaz</p>
+    <h2 id="s6" tabindex="-1">Sprawdźmy to na słowie ALA</h2>
+    <div class="demo">
+      <div><form id="demo-form"><label for="message">Wiadomość</label><input id="message" value="ALA" maxlength="40" required autocomplete="off" spellcheck="false"><button class="primary">Szyfruj</button></form></div>
+      <div><span class="label" id="cipher-label">wynik.txt</span><output id="cipher" aria-labelledby="cipher-label" aria-live="polite">—</output><button type="button" id="decrypt" disabled>Odszyfruj</button></div>
+      <div><span class="label" id="plain-label">odszyfrowane.txt</span><output id="plain" aria-labelledby="plain-label" aria-live="polite">—</output></div>
+    </div>
+    <p class="note">W pokazie każdy bajt jest liczony tak samo jak w C++. W słowie <strong>ALA</strong> obie litery <strong>A</strong> dają <strong>1317</strong>.</p>
+    <div class="callout">W projekcie klucze są małe i oba są jawne. To wersja do nauki. Do ochrony prawdziwych danych używa się dużych kluczy i dodatkowych zabezpieczeń.</div>
+    <p class="note"><a href="https://github.com/ibitek/projekt-rsa">Repozytorium projektu</a></p>
+  </section>
+</main>
+<nav aria-label="Nawigacja prezentacji">
+  <button type="button" id="full">Pełny ekran</button>
+  <progress id="progress" value="1" max="6" aria-label="Postęp prezentacji"></progress>
+  <span id="position" aria-live="polite">1 / 6</span>
+  <button type="button" id="prev" aria-label="Poprzedni slajd" disabled>← Wstecz</button>
+  <button type="button" id="next" class="primary" aria-label="Następny slajd">Dalej →</button>
+</nav>
+</div>
+<script>
+const slides = [...document.querySelectorAll('.slide')];
+const previous = document.querySelector('#prev');
+const next = document.querySelector('#next');
+const position = document.querySelector('#position');
+const progress = document.querySelector('#progress');
+let current = 0;
+
+function showSlide(index) {
+  if (index < 0 || index >= slides.length || index === current) return;
+  slides[current].hidden = true;
+  current = index;
+  slides[current].hidden = false;
+  previous.disabled = current === 0;
+  next.disabled = current === slides.length - 1;
+  progress.value = current + 1;
+  position.textContent = (current + 1) + ' / ' + slides.length;
+  slides[current].querySelector('h1, h2').focus({preventScroll:true});
+  window.scrollTo(0, 0);
+}
+
+previous.addEventListener('click', () => showSlide(current - 1));
+next.addEventListener('click', () => showSlide(current + 1));
+document.addEventListener('keydown', (event) => {
+  if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey ||
+      event.target.closest('input, textarea, select, [contenteditable]')) return;
+  const target = {
+    ArrowRight:current + 1, PageDown:current + 1,
+    ArrowLeft:current - 1, PageUp:current - 1,
+    Home:0, End:slides.length - 1
+  }[event.key];
+  if (typeof target === 'number') {
+    event.preventDefault();
+    showSlide(target);
+  }
+});
+
+const full = document.querySelector('#full');
+full.hidden = !document.fullscreenEnabled;
+full.addEventListener('click', async () => {
+  try {
+    if (document.fullscreenElement) await document.exitFullscreen();
+    else await document.documentElement.requestFullscreen();
+  } catch {
+    full.textContent = 'Pełny ekran niedostępny';
+  }
+});
+document.addEventListener('fullscreenchange', () => {
+  full.textContent = document.fullscreenElement ? 'Wyjdź z pełnego ekranu' : 'Pełny ekran';
+});
+
+const form = document.querySelector('#demo-form');
+const message = document.querySelector('#message');
+const cipher = document.querySelector('#cipher');
+const plain = document.querySelector('#plain');
+const decrypt = document.querySelector('#decrypt');
+const modulus = 3233;
+let blocks = [];
+
+function modPower(base, exponent) {
+  let result = 1;
+  while (exponent > 0) {
+    if (exponent % 2 === 1) result = (result * base) % modulus;
+    base = (base * base) % modulus;
+    exponent = Math.floor(exponent / 2);
+  }
+  return result;
+}
+
+form.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const bytes = new TextEncoder().encode(message.value);
+  blocks = Array.from(bytes, byte => modPower(byte, 7));
+  cipher.textContent = blocks.join(' ');
+  plain.textContent = '—';
+  decrypt.disabled = false;
+});
+message.addEventListener('input', () => {
+  blocks = [];
+  cipher.textContent = '—';
+  plain.textContent = '—';
+  decrypt.disabled = true;
+});
+decrypt.addEventListener('click', () => {
+  const bytes = Uint8Array.from(blocks, block => modPower(block, 1783));
+  plain.textContent = new TextDecoder().decode(bytes);
+});
+</script>
+</body>
+</html>
